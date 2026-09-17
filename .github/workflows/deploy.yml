@@ -1,4 +1,4 @@
-name: 遊べる完成版を自動公開
+name: 遊べる完成版をGitHub Pagesへ自動公開
 
 on:
   push:
@@ -6,26 +6,47 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: リポジトリ取得
         uses: actions/checkout@v4
+
       - name: Node.js設定
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
       - name: 依存関係をインストール
         run: npm install
+
       - name: Reactアプリをビルド
         run: npm run build
-      - name: 公開用ブランチへ配置
-        uses: peaceiris/actions-gh-pages@v4
+
+      - name: GitHub Pagesを設定
+        uses: actions/configure-pages@v5
+
+      - name: 公開ファイルをアップロード
+        uses: actions/upload-pages-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          publish_branch: gh-pages
-          force_orphan: true
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: GitHub Pagesへ公開
+        id: deployment
+        uses: actions/deploy-pages@v4
