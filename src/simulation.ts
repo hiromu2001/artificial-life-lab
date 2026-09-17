@@ -436,7 +436,7 @@ export class シミュレーション {
     this.統計.出生数++
   }
 
-  1ステップ() {
+  進める() {
     this.時刻++
     if (this.乱数.次() < this.設定.餌の出現率) this.餌を出す()
     if (this.餌一覧.length < this.設定.初期餌数 * 0.35 && this.乱数.次() < 0.35) this.餌を出す()
