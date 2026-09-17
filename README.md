@@ -67,14 +67,6 @@ npm run dev
 npm run build
 ```
 
-## 自動公開
-
-`main` ブランチに変更を入れると、GitHub Actions がReactアプリをビルドし、GitHub Pagesへ自動デプロイします。
-
-公開版：
-
-https://hiromu2001.github.io/artificial-life-lab/
-
 ## この実験で見たいこと
 
 - 餌に近づく行動が自然に増えるか
