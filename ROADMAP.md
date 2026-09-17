@@ -1,201 +1,141 @@
-# Roadmap — Artificial Life Lab
+# 人工生命ラボ 今後の開発計画
 
-## Phase 0 — Project Foundation
+## 第1段階：遊べる最初の完成版
 
-目的：開発を始められる最小構成を作る。
+現在の目標。
 
-- [ ] Vite + React + TypeScript セットアップ
-- [ ] Simulation Engine と UI のディレクトリ分離
-- [ ] Seeded Random 実装
-- [ ] 基本型定義
-- [ ] 開発用の簡易テスト環境
+- React + TypeScript + Vite化
+- 日本語UI
+- 人工生命100体以上
+- 餌
+- エネルギー
+- 小型ニューラルネットワーク
+- 繁殖
+- 世代交代
+- 突然変異
+- 個体選択
+- 脳の反応表示
+- 個体数・世代推移
+- 実験条件変更
+- 乱数シード
+- 結果保存
+- 自動ビルドと公開
 
-完了条件：空の World をブラウザで描画し、Simulation Tick を開始・停止できる。
+## 第2段階：生態系を作る
 
----
+単なる採餌シミュレーションから、生態系らしい競争へ広げる。
 
-## Phase 1 — MVP: Life, Food, Evolution
+追加候補：
 
-目的：進化が成立する最小の人工生命系を完成させる。
+- 捕食者
+- 被食者
+- 攻撃
+- 防御
+- 餌の種類
+- 障害物
+- 地形
+- 昼夜
+- 移動コストの地域差
 
-### World
+観察したいこと：
 
-- [ ] 2D World
-- [ ] Food の生成・消滅
-- [ ] Life の生成・死亡
+- 捕食と逃避の共進化
+- 安全な場所への集中
+- 活動時間帯の変化
+- 移動速度や視野の変化
 
-### Life
+## 第3段階：遺伝を複雑にする
 
-- [ ] position / direction / age / energy
-- [ ] move / turn / eat
-- [ ] Energy 消費
-- [ ] Energy 0 による死亡
+- 有性生殖
+- 2個体の遺伝子混合
+- 性別
+- 相手選び
+- 遺伝的距離
+- 種分化判定
 
-### Brain
+観察したいこと：
 
-- [ ] Feed Forward Neural Network
-- [ ] Sensor 入力
-- [ ] Action 出力
-- [ ] Brain Weight の Genome 化
+- 特定の特徴を持つ個体が選ばれるか
+- 集団が複数の種に分かれるか
+- 生存に有利でない特徴が繁殖上の理由で残るか
 
-### Evolution
+## 第4段階：記憶と学習
 
-- [ ] Reproduction
-- [ ] Genome inheritance
-- [ ] Mutation
-- [ ] Generation tracking
+現在は脳の重みが生涯変化しない。
 
-### UI
-
-- [ ] Canvas Renderer
-- [ ] Start / Pause / Reset
-- [ ] Simulation Speed
-- [ ] Life Inspector
-- [ ] Brain Viewer
-- [ ] Population Graph
-- [ ] 基本 Statistics
-
-### Reproducibility
-
-- [ ] Random Seed 指定
-- [ ] 設定値の固定・再実行
-
-完了条件：ランダム初期化された集団が Food を巡って生存・死亡・繁殖し、複数世代を観察できる。
-
----
-
-## Phase 2 — Ecology
-
-目的：単純な採餌だけではない選択圧を導入する。
-
-- [ ] Predator / Prey
-- [ ] Attack / Defense
-- [ ] Vision Range の遺伝
-- [ ] Speed の遺伝
-- [ ] Energy Efficiency の遺伝
-- [ ] Terrain
-- [ ] Resource patches
-- [ ] Day / Night
-- [ ] Population collapse detection
-- [ ] Genome diversity metrics
-
-観察候補：
-
-- 回避行動
-- 追跡行動
-- 資源集中地点への適応
-- 生態的ニッチの分化
-
----
-
-## Phase 3 — Species & Social Behavior
-
-目的：個体間相互作用から集団行動が生まれる条件を作る。
-
-- [ ] Genetic Crossover
-- [ ] Sexual Reproduction
-- [ ] Mate selection
-- [ ] Species / lineage tracking
-- [ ] Kin recognition の実験
-- [ ] Communication signal
-- [ ] Social sensor
-- [ ] 群れ指標
-- [ ] Social distance 指標
-
-観察候補：
-
-- 群れ
-- 分散
-- 縄張り
-- 配偶戦略
-- 協力・競争
-
----
-
-## Phase 4 — Learning & Memory
-
-目的：世代間進化だけでなく、個体の生涯中の学習を導入する。
-
-- [ ] Recurrent Neural Network
-- [ ] Memory state
-- [ ] Reward signal
-- [ ] Reinforcement Learning の実験
-- [ ] Hebbian Learning
-- [ ] Learned behavior と inherited behavior の比較
-
-主要な問い：
-
-> 「進化で獲得する能力」と「生涯学習で獲得する能力」は、どの環境条件で使い分けられるか。
-
----
-
-## Phase 5 — Evolving Brains
-
-目的：Brain の Weight だけでなく構造そのものを進化させる。
-
-- [ ] Brain topology mutation
-- [ ] Node mutation
-- [ ] Connection mutation
-- [ ] NEAT または類似手法
-- [ ] Brain complexity metrics
-- [ ] Complexity cost
-
-観察候補：
-
-- 脳サイズの増加
-- 複雑な Brain が本当に有利になる条件
-- 計算コストと適応能力のトレードオフ
-
----
-
-## Phase 6 — Neuroscience Mode
-
-目的：抽象的ニューラルネットワークから、より神経科学寄りのモデルへ拡張する。
-
-- [ ] Spiking Neural Network
-- [ ] Membrane potential visualization
-- [ ] STDP
-- [ ] Neuromodulation
-- [ ] Dopamine-like reward modulation
-- [ ] Neural activity recording
-
-この Phase では、生物学的モデルと単純化された人工生命モデルを混同しないよう、モードを明確に分離する。
-
----
-
-## Phase 7 — Connectome Experiments
-
-目的：公開されている昆虫神経回路データなどを参考に、実データ由来の神経構造を仮想環境へ接続する可能性を検討する。
+ここに個体が生きている間の学習を追加する。
 
 候補：
 
-- [ ] Connectome data importer
-- [ ] Neuron / synapse mapping
-- [ ] Sensor mapping
-- [ ] Motor output mapping
-- [ ] Simplification layer
-- [ ] Synthetic Brain との比較実験
+- 短期記憶
+- 再帰型ニューラルネットワーク
+- 報酬学習
+- ヘブ則
+- 時間差依存可塑性
+- ドーパミン様の報酬信号
 
-注意：Connectome が存在することと、そのまま完全な動物行動を再現できることは同義ではない。神経モデル、身体、感覚入力、神経修飾、学習則などの不足を明示する。
+観察したいこと：
 
----
+- 生まれつきの能力と学習能力のどちらが重要になるか
+- 学習しやすい脳そのものが進化するか
 
-## Phase 8 — Experimental Platform
+## 第5段階：社会行動
 
-目的：単なるシミュレーターから、再現可能な人工生命実験基盤へ発展させる。
+- 他個体を識別する感覚
+- 群れ
+- 追従
+- 逃避
+- 縄張り
+- 協力
+- 競争
+- 簡単な信号発信
 
-- [ ] Experiment presets
-- [ ] Batch simulations
-- [ ] Multi-seed experiments
-- [ ] Metric comparison
-- [ ] JSON / CSV export
-- [ ] Save / Load
-- [ ] Experiment A/B comparison
-- [ ] Emergent behavior metrics
-- [ ] Shareable experiment configuration
+観察したいこと：
 
-最終的には、
+- 群れ行動が自然に生まれるか
+- 協力と裏切りが共存するか
+- 簡単なコミュニケーションが生まれるか
 
-**Artificial Life × Evolution × Neural Networks × Learning × Visualization × Reproducible Experiments**
+## 第6段階：脳の構造そのものを進化させる
 
-を統合したブラウザベースの Artificial Life Laboratory を目指す。
+現在は全個体が同じ層構造を持つ。
+
+将来的には以下も変化可能にする。
+
+- 神経数
+- 神経同士の接続
+- 中間層の数
+- 記憶神経
+- 感覚入力数
+- 行動出力数
+
+候補手法：神経回路構造の進化手法など。
+
+## 第7段階：より生物学的な神経モデル
+
+- スパイキングニューラルネットワーク
+- 発火頻度
+- 神経伝達物質
+- ドーパミン
+- シナプス可塑性
+- 興奮性・抑制性神経
+
+ここからは単なる機械学習モデルではなく、神経科学寄りの実験環境へ近づける。
+
+## 第8段階：実際の昆虫神経回路との接続
+
+最終的には、公開されている昆虫の神経接続データを利用し、人工環境内で動かせるか検討する。
+
+候補：
+
+- 実際の神経接続構造の読み込み
+- 感覚器官との対応付け
+- 運動出力との対応付け
+- 報酬信号の追加
+- 学習実験
+
+ただし、人工生命モデルと実際の生物神経回路モデルは明確に区別する。
+
+## 最終目標
+
+「生命に最低限の感覚・身体・報酬・遺伝だけを与えたとき、どこまで複雑な行動が自然に生まれるのか」を、誰でもブラウザで試せる人工生命実験室にする。
