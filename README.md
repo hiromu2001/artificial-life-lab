@@ -2,6 +2,8 @@
 
 シンプルなルールだけを与えた人工生命が、世代交代と突然変異を通してどんな行動を身につけるか観察するブラウザ型シミュレーターです。
 
+**▶ ブラウザで遊ぶ:** https://hiromu2001.github.io/artificial-life-lab/
+
 ## 何をするアプリ？
 
 画面の中には、緑色の人工生命と黄色い餌が存在します。
@@ -17,7 +19,7 @@
 
 ## 遊び方
 
-1. アプリを開く
+1. [公開版](https://hiromu2001.github.io/artificial-life-lab/)を開く
 2. 「開始」を押す
 3. 緑色の個体をクリックする
 4. 右側でその個体の状態と脳の反応を見る
@@ -48,6 +50,7 @@
 - Vite
 - Canvas API
 - GitHub Actions
+- GitHub Pages
 
 シミュレーション本体と表示処理は分離してあります。
 
@@ -66,11 +69,11 @@ npm run build
 
 ## 自動公開
 
-`main` ブランチに変更を入れると、GitHub Actions が自動でReactアプリをビルドし、公開用の `gh-pages` ブランチへ配置します。
+`main` ブランチに変更を入れると、GitHub Actions がReactアプリをビルドし、GitHub Pagesへ自動デプロイします。
 
-公開用ブランチが作成された後は、以下のURLから完成版を直接開けます。
+公開版：
 
-https://raw.githack.com/hiromu2001/artificial-life-lab/gh-pages/index.html
+https://hiromu2001.github.io/artificial-life-lab/
 
 ## この実験で見たいこと
 
