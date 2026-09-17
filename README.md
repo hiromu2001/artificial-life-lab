@@ -1,142 +1,96 @@
-# Artificial Life Lab
+# 人工生命ラボ
 
-> シンプルなルールから知性が生まれる過程を観察する、ニューラルネットワーク・進化・自然選択を用いたブラウザベースの人工生命シミュレーター。
+シンプルなルールだけを与えた人工生命が、世代交代と突然変異を通してどんな行動を身につけるか観察するブラウザ型シミュレーターです。
 
-## ▶ Play
+## 何をするアプリ？
 
-**[ブラウザで Artificial Life Lab を起動](https://raw.githack.com/hiromu2001/artificial-life-lab/main/index.html)**
+画面の中には、緑色の人工生命と黄色い餌が存在します。
 
-または、このリポジトリをClone / Downloadして `index.html` をブラウザで開くだけで動作します。ビルドやnpm installは不要です。
+人工生命には「餌に向かって進め」という正解を直接書いていません。各個体は、餌の位置・他個体の位置・自分のエネルギーなどを小さなニューラルネットワークで処理し、次の4つから行動を選びます。
 
-## 現在できること
+- 前進する
+- 左へ曲がる
+- 右へ曲がる
+- 食べる
 
-- 100体以上の人工生命をリアルタイムシミュレーション
-- 各個体が独自のFeed Forward Neural Networkで行動を決定
-- Food / 他個体 / Energy / Age / Noiseをセンサー入力として利用
-- MOVE / LEFT / RIGHT / EATをBrain出力から選択
-- Food摂取によるEnergy回復
-- Energy消費と死亡
-- 無性生殖と世代交代
-- Neural Network Weight / Speed / Vision / Efficiencyの遺伝
-- Gaussian Mutationによる突然変異
-- 明示的なFitness Rankingを使わない自然選択
-- Random Seedによる再現可能な実験
-- 個体クリックによるLife Inspector
-- ニューロン活性と結合WeightのBrain Viewer
-- Population / Generationのリアルタイムグラフ
-- Births / Deaths / Food consumedの統計
-- 0.5× / 1× / 5× / 20× / MAXの高速シミュレーション
-- Mutation Rateなどの実験条件変更
-- 実験結果のJSONエクスポート
-- 絶滅検出と進化イベントログ
+餌をうまく食べてエネルギーを増やした個体は子供を作ります。子供は親の脳を受け継ぎますが、少しだけ突然変異します。その結果、何世代も経つうちに生き残りやすい行動が増えるかを観察できます。
 
-## 概要
+## 遊び方
 
-Artificial Life Lab は、人工生命に最低限の知覚・行動・エネルギー・繁殖・遺伝の仕組みだけを与え、世代交代の中でどのような行動が自然に生まれるかを観察する実験プラットフォームです。
+1. アプリを開く
+2. 「開始」を押す
+3. 緑色の個体をクリックする
+4. 右側でその個体の状態と脳の反応を見る
+5. 慣れたら速度を「最速」にして世代を進める
+6. 「餌が少ない過酷な世界」など条件を変えて比較する
 
-「食料があれば近づく」といった正解行動は直接プログラムしていません。各個体はセンサー入力をニューラルネットワークで処理し、その出力によってのみ行動します。生存して繁殖した個体のBrainと身体特性が次世代に受け継がれ、Mutationによって少しずつ変化します。
+## 主な機能
 
-```text
-Environment
-    ↓
-Sensors
-    ↓
-Neural Network
-    ↓
-Action
-    ↓
-Energy / Survival / Reproduction
-    ↓
-Genome inheritance + Mutation
-    ↓
-Next generation
-```
-
-## 操作方法
-
-1. ページを開くと自動でSimulationが開始します。
-2. 三角形の個体をクリックすると、その個体のEnergy・世代・Brain Activityを観察できます。
-3. `速度` を `MAX` にすると進化を高速で進められます。
-4. Mutation Rate、Food量、繁殖閾値、Seedなどを変更して `リセット` すると別条件の実験を開始できます。
-5. `実験JSONを書き出す` から統計データを保存できます。
-
-## Genome
-
-現在は以下の情報が遺伝します。
-
-- Neural Network weights / biases
-- Speed
-- Vision range
-- Energy efficiency
-- Lineage color
-
-子個体では設定したMutation Rateに応じてGenomeが変異します。
-
-## Brain
-
-MVPのBrain構造は以下です。
-
-```text
-10 Sensors
-   ↓
-12 neurons
-   ↓
-8 neurons
-   ↓
-4 Actions
-```
-
-Action:
-
-- MOVE
-- LEFT
-- RIGHT
-- EAT
-
-Brain Viewerでは各ニューロンの活性値と、正負の結合Weightをリアルタイムに確認できます。
-
-## 設計原則
-
-### 行動を直接教えない
-
-Foodが近いからFood方向へ移動する、といったルールは実装しません。環境情報はSensorとして渡すだけで、行動はBrainが決定します。
-
-### 明示的な選抜を行わない
-
-Fitness Score順に上位個体を残す方式ではなく、環境内でFoodを獲得し、生存し、繁殖できたGenomeが自然に増える方式です。
-
-### 再現可能にする
-
-Random Seedを指定できるため、同一設定・同一Seedの実験を比較できます。
+- 100体以上の人工生命を同時にシミュレーション
+- 餌を探すための感覚入力
+- 小型ニューラルネットワークによる行動決定
+- エネルギー消費と死亡
+- 繁殖と世代交代
+- 親から子への脳の継承
+- 突然変異
+- 移動速度・視野の広さの遺伝
+- 個体クリックによる状態確認
+- 脳の反応をリアルタイム表示
+- 個体数・世代の推移グラフ
+- 実験条件の変更
+- 乱数シードによる再現
+- 実験結果のJSON保存
 
 ## 技術構成
 
-現在のPlayable MVPは依存ライブラリなしのStatic Web Appです。
+- React
+- TypeScript
+- Vite
+- Canvas API
+- GitHub Actions
 
-- HTML Canvas
-- Vanilla JavaScript
-- CSS
-- GitHub ActionsによるJavaScript構文チェック
+シミュレーション本体と表示処理は分離してあります。
 
-ビルド環境を不要にすることで、リポジトリを取得してすぐ実験できる構成にしています。
+## 開発環境で動かす
 
-## ドキュメント
+```bash
+npm install
+npm run dev
+```
 
-- [要件定義](./REQUIREMENTS.md)
-- [ロードマップ](./ROADMAP.md)
+ビルド確認：
 
-## Next
+```bash
+npm run build
+```
 
-次の候補は、捕食者・攻撃/防御・記憶・性選択・種分化・遺伝的交叉・NEAT・RNN・Spiking Neural Network・ドーパミン・STDPです。
+## 自動公開
 
-最終的には、
+`main` ブランチに変更を入れると、GitHub Actions が自動でReactアプリをビルドし、公開用の `gh-pages` ブランチへ配置します。
 
-> 生命に最低限の知覚・身体・報酬・遺伝だけを与えたとき、どこまで複雑な行動が自然に生まれるのか。
+公開用ブランチが作成された後は、以下のURLから完成版を直接開けます。
 
-を実験できるArtificial Life Laboratoryを目指します。
+https://raw.githack.com/hiromu2001/artificial-life-lab/gh-pages/index.html
 
-## Status
+## この実験で見たいこと
 
-**Playable MVP**
+- 餌に近づく行動が自然に増えるか
+- 無駄な移動が減るか
+- 生存期間が伸びるか
+- 視野や移動速度がどのように変化するか
+- 将来的に群れ・回避・捕食・記憶などが発生するか
 
-Artificial Life × Evolution × Neural Networks × Emergence
+## 今後追加したいもの
+
+- 捕食者
+- 攻撃と防御
+- 性別と有性生殖
+- 種分化
+- 記憶
+- 群れ行動
+- 神経回路そのものの進化
+- スパイキングニューラルネットワーク
+- ドーパミンなどの報酬学習
+- 実際の昆虫コネクトームとの接続
+
+詳細は [要件定義](./REQUIREMENTS.md) と [今後の開発計画](./ROADMAP.md) を参照してください。
