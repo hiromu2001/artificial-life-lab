@@ -1,431 +1,231 @@
-# 要件定義 — Artificial Life Lab
+# 人工生命ラボ 要件定義
 
 ## 1. 目的
 
-Artificial Life Lab は、単純な知覚・行動・エネルギー・繁殖・遺伝ルールを持つ人工生命が、世代交代と突然変異を通じてどのような行動を獲得するか観察するブラウザベースの人工生命シミュレーターである。
+人工生命に最低限の感覚・行動・エネルギー・繁殖・遺伝だけを与え、世代交代の中でどのような行動が自然に増えていくか観察できるブラウザ型シミュレーターを作る。
 
-本プロジェクトの中心テーマは **Emergence（創発）** とする。
+人間が「餌へ向かう」「効率よく移動する」といった正解行動を直接書かないことを最重要原則とする。
 
-## 2. MVP のゴール
+## 2. 最初の完成版で必要なもの
 
-MVP では、人工生命がニューラルネットワークによって行動し、Food を獲得し、生存・繁殖・突然変異を繰り返すことで、世代間の行動変化を観察できる状態を完成条件とする。
+- 2次元の有限空間
+- 人工生命100体以上
+- 餌の配置と再生成
+- 個体ごとのエネルギー
+- エネルギー切れによる死亡
+- 繁殖
+- 世代の記録
+- 親から子への脳パラメータ継承
+- 突然変異
+- 個体の選択
+- 選択個体の状態表示
+- 脳の反応表示
+- 個体数と世代の推移表示
+- 実験速度変更
+- 実験条件変更
+- 乱数シード指定
+- 実験結果保存
 
-MVP では高度な生物学的再現性よりも、以下を優先する。
+## 3. 個体が受け取る情報
 
-1. 動作が理解しやすいこと
-2. 進化の結果を観察できること
-3. 再現可能な実験ができること
-4. 将来拡張しやすい構造であること
+個体は毎ステップ、次の情報を受け取る。
 
-## 3. システム構成
+1. 餌が視野内にあるか
+2. 餌までの近さ
+3. 餌が左右どちらにあるか
+4. 餌が前後どちらにあるか
+5. 他個体までの近さ
+6. 他個体が左右どちらにいるか
+7. 他個体が前後どちらにいるか
+8. 自分のエネルギー
+9. 自分の年齢
+10. ランダムなゆらぎ
 
-### 3.1 World
+## 4. 脳
 
-- 2D の有限空間とする
-- ブラウザ内で完結する
-- Food と Artificial Life を配置する
-- MVP では地形・障害物・天候・捕食者を実装しない
+各個体は小さなニューラルネットワークを持つ。
 
-### 3.2 Artificial Life
+初期構成は以下とする。
 
-各個体は最低限、以下の状態を持つ。
+- 入力層：10
+- 中間層：12
+- 中間層：8
+- 出力層：4
 
-| 項目 | 内容 |
-| --- | --- |
-| id | 個体 ID |
-| generation | 世代 |
-| age | 年齢 |
-| energy | エネルギー |
-| position | 座標 |
-| direction | 向き |
-| speed | 移動速度 |
-| brain | Neural Network |
-| genome | 遺伝情報 |
-| parentId | 親個体 ID |
-| children | 子孫数 |
-| foodEaten | Food 獲得数 |
-| cumulativeReward | 観察用累積報酬 |
+出力は以下の4行動に対応する。
 
-## 4. Sensor 要件
+- 前進
+- 左旋回
+- 右旋回
+- 食べる
 
-MVP では以下を Brain の入力として利用する。
+最も強い出力を、そのステップの行動として採用する。
 
-### Food Sensor
+## 5. エネルギー
 
-- 最寄り Food までの距離
-- 最寄り Food の相対方向
+個体は生きているだけで少量のエネルギーを消費する。
 
-### Life Sensor
+前進や旋回などの行動でも追加消費する。
 
-- 最寄り個体までの距離
-- 最寄り個体の相対方向
+餌を食べるとエネルギーを回復する。
 
-### Internal Sensor
+エネルギーが0以下になった個体は死亡する。
 
-- Energy
-- Age
+## 6. 繁殖
 
-### Noise Sensor
+一定以上のエネルギーと年齢を持つ個体は繁殖できる。
 
-- ランダム値
+子供は親の脳パラメータを受け継ぐ。
 
-入力値は可能な限り正規化し、Brain が極端なスケール差を受けないようにする。
+子供には一定確率で突然変異を加える。
 
-## 5. Brain 要件
+子供の世代番号は「親の世代 + 1」とする。
 
-MVP では Feed Forward Neural Network を使用する。
+## 7. 突然変異
 
-初期案：
+突然変異の対象は次の通り。
 
-- Input: 8 前後
-- Hidden Layer 1: 12
-- Hidden Layer 2: 8
-- Output: 4
+- ニューラルネットワークの重み
+- ニューラルネットワークのバイアス
+- 移動速度
+- 視野の広さ
+- エネルギー効率
+- 個体色
 
-出力候補：
+突然変異率と突然変異の大きさは画面から変更できるようにする。
 
-- moveForward
-- turnLeft
-- turnRight
-- eat
+## 8. 自然選択
 
-最も大きい出力をその tick の基本行動として採用する。
+個体に人工的な順位付けは行わない。
 
-重要事項：
+長く生き、餌を獲得し、繁殖できた個体の遺伝子が結果的に増える構造そのものを自然選択として扱う。
 
-- 「Food が近いなら Food 方向へ向かう」のような正解行動を直接実装しない
-- 行動決定は Brain の出力によって行う
-- Brain の重みは Genome として遺伝対象にする
+## 9. 画面
 
-## 6. Energy 要件
+### 生態系表示
+
+- 黄色い点：餌
+- 緑系の三角：人工生命
+- 個体の向きが分かる形状
+- 個体をクリック可能
+- 選択個体の視野範囲を表示
+
+### 個体情報
+
+- 個体番号
+- 世代
+- 年齢
+- エネルギー
+- 現在の行動
+- 食べた餌数
+- 子供数
+- 移動速度
+- 視野の広さ
+
+### 脳表示
+
+- 感覚入力
+- 中間層
+- 行動出力
+- 神経の反応強度
+- 正負の結合
+
+### 統計
+
+- 現在の個体数
+- 最大世代
+- 経過ステップ
+- 出生数
+- 死亡数
+- 食べた餌数
+- 個体数推移
+- 世代推移
+
+## 10. 操作
+
+- 開始
+- 一時停止
+- 同じ条件でやり直す
+- 新しいおすすめ条件で開始
+- 0.5倍〜10倍
+- 最速モード
+- 実験条件変更
+- 結果保存
+
+## 11. 実験条件
+
+画面から変更可能な項目：
+
+- 初期個体数
+- 初期餌数
+- 最大餌数
+- 餌1個の回復量
+- 餌の出現率
+- 突然変異率
+- 突然変異強度
+- 繁殖に必要なエネルギー
+- 乱数シード
+
+## 12. 再現性
+
+同じ乱数シードと同じ設定なら、可能な限り同じ実験結果を再現できること。
+
+シミュレーション内では直接 `Math.random()` を使わず、シード付き乱数生成器を利用する。
+
+## 13. 技術構成
 
-各行動で Energy を消費する。
-
-初期値例：
-
-- Idle: -0.01
-- Turn: -0.03
-- Move: -0.10
-- Eat success: Food の設定値分だけ Energy 回復
-
-Energy が 0 以下になった個体は死亡する。
-
-具体値は設定可能にし、後から調整できるようにする。
-
-## 7. Food 要件
-
-- World 内にランダム生成する
-- Food Spawn Rate を設定可能にする
-- Food Energy を設定可能にする
-- Max Food を設定可能にする
-- MVP では一様ランダム配置のみ対応する
-
-## 8. Reproduction 要件
-
-一定条件を満たした個体は子個体を生成する。
-
-初期条件例：
-
-- age >= minimumReproductionAge
-- energy >= reproductionThreshold
-
-繁殖時：
-
-- 親の Genome をコピーする
-- 親の generation + 1 を子の generation とする
-- 親の Energy の一部を繁殖コストとして消費する
-- Mutation を適用する
-
-MVP では無性生殖とする。
-
-## 9. Mutation 要件
-
-Brain Weight に対して確率的変異を加える。
-
-概念式：
-
-```text
-childWeight = parentWeight + GaussianNoise(0, mutationStrength)
-```
-
-設定可能項目：
-
-- Mutation Rate
-- Mutation Strength
-
-MVP では主に Brain Weight を対象とする。
-
-将来的には以下も対象候補とする。
-
-- Vision Range
-- Speed
-- Energy Efficiency
-- Brain topology
-- Memory capacity
-
-## 10. Natural Selection 方針
-
-明示的な Fitness Score 順ランキングによる選抜は行わない。
-
-World 内で、
-
-1. 生存する
-2. Food を獲得する
-3. 繁殖する
-4. 子孫を残す
-
-ことができた Genome が結果的に増える方式を基本とする。
-
-統計・観察用のスコアを計測することは許容するが、そのスコアで直接生存個体を選抜しない。
-
-## 11. Simulation Tick
-
-1 tick の処理順は原則以下とする。
-
-1. Sense
-2. Brain inference
-3. Action decision
-4. Action execution
-5. Energy consumption
-6. Environment update
-7. Death check
-8. Reproduction check
-9. Statistics update
-
-計算ロジックは描画処理と分離する。
-
-## 12. UI 要件
-
-### 12.1 Main World
-
-- Canvas 上に World を描画する
-- Life の向きが分かる形状にする
-- Food を視認できるようにする
-- 個体クリックを可能にする
-
-### 12.2 Top Status
-
-最低限表示：
-
-- Population
-- Simulation Tick
-- Max Generation
-- Food Count
-- Simulation Speed
-
-### 12.3 Life Inspector
-
-選択個体について以下を表示する。
-
-- ID
-- Generation
-- Age
-- Energy
-- Children
-- Food Eaten
-- Parent ID
-- Speed
-- Vision Range（実装する場合）
-
-### 12.4 Brain Viewer
-
-選択個体の Brain を可視化する。
-
-最低限：
-
-- Input node
-- Hidden node
-- Output node
-- 現在の活性値
-- 選択された Action
-
-Brain Viewer は本プロジェクトの主要 UI とする。
-
-### 12.5 Statistics
-
-最低限計測：
-
-- Population
-- Births
-- Deaths
-- Max Generation
-- Average Age
-- Average Energy
-- Food Consumed
-
-時系列グラフ：
-
-- Population
-- Max Generation
-- Average Lifespan または Average Age
-
-## 13. Simulation Controls
-
-必須：
-
-- Start
-- Pause
-- Reset
-- Simulation Speed 切替
-
-速度候補：
-
-- 0.5x
-- 1x
-- 2x
-- 5x
-- 10x
-- MAX
-
-高速時は描画頻度を落とし、Simulation Engine 自体の tick 数を優先する。
-
-## 14. Settings
-
-最低限ユーザーが変更可能にする。
-
-- Initial Population
-- Food Spawn Rate
-- Food Energy
-- Max Food
-- Mutation Rate
-- Mutation Strength
-- Energy Consumption
-- Reproduction Threshold
-- Random Seed
-
-## 15. Random Seed / 再現性
-
-- 擬似乱数生成器を一元管理する
-- Seed を指定可能にする
-- 同一バージョン・同一設定・同一 Seed で可能な限り同一結果を再現できるようにする
-
-保存対象：
-
-- Seed
-- Simulation Settings
-- Application Version
-
-## 16. Save / Load
-
-MVP 後半または v0.2 までに JSON 保存を実装する。
-
-保存候補：
-
-- World state
-- Life state
-- Genome / Brain weights
-- Food
-- Statistics
-- Seed
-- Settings
-- Simulation tick
-
-## 17. Architecture
-
-Simulation Engine と UI を分離する。
-
-想定構造：
-
-```text
-src/
-  simulation/
-    World
-    Life
-    Brain
-    Genome
-    Food
-    Mutation
-    Reproduction
-    Random
-    Statistics
-  rendering/
-    WorldRenderer
-    BrainRenderer
-  ui/
-    Controls
-    LifeInspector
-    StatisticsPanel
-    SettingsPanel
-  experiments/
-```
-
-Simulation Engine は React に依存させない。
-
-## 18. 技術スタック
-
-初期候補：
-
-- TypeScript
 - React
+- TypeScript
 - Vite
-- HTML Canvas
-- Zustand
-- Recharts
+- Canvas API
+- GitHub Actions
 
-MVP ではバックエンドを利用しない。
+シミュレーション本体はReactの表示処理から分離する。
 
-## 19. Performance 要件
+## 14. 公開
 
-目標：
+`main` ブランチ更新時に自動でビルドし、公開用ブランチへ完成物を配置する。
 
-- 200 個体程度で通常観察モードが快適に動作すること
-- Fast Simulation では描画頻度を落とし、より多数の個体・tick を処理できること
-- Simulation と Rendering の負荷を個別に計測できる設計にすること
+GitHubを見た人が、環境構築せずそのまま遊べることを目標とする。
 
-60 FPS は目標値であり、進化計算を犠牲にしてまで固定要件とはしない。
+## 15. 完成条件
 
-## 20. MVP Acceptance Criteria
+次をすべて満たしたら最初の完成版とする。
 
-以下をすべて満たした時点を MVP 完成とする。
+- ブラウザで起動できる
+- 100体以上の個体が同時に動く
+- 個体の行動が脳出力だけで決まる
+- 餌を食べられる
+- エネルギーが減る
+- 死亡する
+- 繁殖する
+- 世代が進む
+- 突然変異する
+- 個体を選択できる
+- 脳を確認できる
+- 統計を確認できる
+- 実験速度を変更できる
+- 条件を変更できる
+- 乱数シードを指定できる
+- 実験結果を保存できる
+- React + TypeScript + Viteでビルドできる
 
-- [ ] ブラウザで起動できる
-- [ ] 100体以上の個体を生成できる
-- [ ] 個体が Brain 出力で行動する
-- [ ] Food を感知できる
-- [ ] Food を摂取できる
-- [ ] 行動によって Energy が減少する
-- [ ] Energy 0 で死亡する
-- [ ] 条件を満たすと繁殖する
-- [ ] Brain Weight が子へ遺伝する
-- [ ] Mutation が発生する
-- [ ] Generation を追跡できる
-- [ ] 個体をクリックして詳細を表示できる
-- [ ] Brain Activity を表示できる
-- [ ] Population の時系列を表示できる
-- [ ] Simulation Speed を変更できる
-- [ ] Random Seed を指定できる
-- [ ] Reset できる
+## 16. 最初の完成版では入れないもの
 
-## 21. MVP の範囲外
-
-MVP には含めない。
-
-- 捕食
-- 戦闘
+- 捕食者
+- 攻撃
+- 防御
 - 性別
-- Sexual Selection
-- Sexual Reproduction
-- Genetic Crossover
-- 群れ判定
+- 有性生殖
+- 種分化
 - 記憶
-- Reinforcement Learning
-- Spiking Neural Network
-- Communication
-- Language
-- Terrain
-- Weather
-- Disease
-- NEAT
-- 実昆虫 Connectome
+- 群れ判定
+- 言語
+- 地形
+- 天候
+- 疾病
+- 神経回路構造そのものの進化
+- スパイキングニューラルネットワーク
+- 実際の昆虫コネクトーム
 
-## 22. 検証したい問い
-
-MVP 完成後、最低限以下を実験する。
-
-1. ランダム初期化された Brain から Food 獲得効率は世代とともに変化するか
-2. Mutation Rate の違いで集団維持率・絶滅率・世代到達速度はどう変わるか
-3. Food の希少性によって行動傾向は変わるか
-4. Energy Cost によって移動量や寿命はどう変化するか
-5. 複数 Seed で同様の傾向が再現するか
-
-単一実行の見た目だけで「知能が生まれた」「進化した」と断定せず、複数 Seed と統計量を使って評価する。
+これらは完成後に段階的に追加する。
